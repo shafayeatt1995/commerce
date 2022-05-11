@@ -21,4 +21,7 @@
 	"[css]": {
 		"editor.defaultFormatter": "aeschli.vscode-css-formatter"
 	},
+	"[php]": {
+		"editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+	},
 }

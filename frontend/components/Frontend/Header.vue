@@ -13,13 +13,13 @@
 					<div class="col-auto">
 						<div class="header-links">
 							<ul>
-								<li>
+								<li v-if="!auth_check">
 									<router-link :to="{name: 'sign-in'}">Sign in</router-link>
 								</li>
-								<li>
+								<li v-if="!auth_check">
 									<router-link :to="{name: 'sign-up'}">Sign up</router-link>
 								</li>
-								<li><a href="#">Track Your Order</a></li>
+								<li v-if="auth_check"><a href="#">Track Your Order</a></li>
 								<li>
 									<a class="dropdown-toggle" href="#" @click="language = !language">Language</a>
 									<transition name="fade" mode="out-in">
@@ -206,11 +206,50 @@
 											</button>
 										</form>
 									</div>
-									<a href="shop.html">
+									<button type="button" @click="account = !account">
 										<i>
-											<icon :icon="['far', 'user']"></icon>
+											<icon :icon="['far', 'circle-user']"></icon>
 										</i>
-									</a>
+									</button>
+									<div class="account-dropdown" :class="account ? 'activeCard' : ''">
+										<ul>
+											<li class="account-el" v-if="!auth_check">
+												<nuxt-link :to="{name: 'sign-in'}">
+													<i>
+														<icon :icon="['far', 'circle-user']"></icon>
+													</i> Sign in
+												</nuxt-link>
+											</li>
+											<li class="account-el" v-if="!auth_check">
+												<nuxt-link :to="{name: 'sign-up'}">
+													<i>
+														<icon :icon="['far', 'circle-user']"></icon>
+													</i> Sign up
+												</nuxt-link>
+											</li>
+											<li class="account-el" v-if="auth_check">
+												<nuxt-link :to="{name: 'index'}">
+													<i>
+														<icon :icon="['far', 'circle-user']"></icon>
+													</i> My account
+												</nuxt-link>
+											</li>
+											<li class="account-el" v-if="auth_check">
+												<nuxt-link :to="{name: 'index'}">
+													<i>
+														<icon :icon="['fas', 'user-gear']"></icon>
+													</i> Setting
+												</nuxt-link>
+											</li>
+											<li class="account-el" v-if="auth_check">
+												<button type="button" @click="sign_out">
+													<i>
+														<icon :icon="['fas', 'arrow-right-from-bracket']"></icon>
+													</i> Sign out
+												</button>
+											</li>
+										</ul>
+									</div>
 									<a href="wishlist.html">
 										<i>
 											<icon :icon="['far', 'heart']"></icon>
@@ -228,6 +267,11 @@
 				</div>
 			</div>
 		</div>
+		<a href="#" class="scrollToTop scroll-btn" :class="scroll > 200 ? 'show' : ''">
+			<i>
+				<icon :icon="['fas', 'arrow-up']"></icon>
+			</i>
+		</a>
 	</header>
 </template>
 <script>
@@ -237,7 +281,39 @@
 				language: false,
 				currency: false,
 				search: false,
+				account: false,
+				scroll: 0,
 			};
+		},
+
+		methods: {
+			sign_out() {
+				this.account = false;
+				this.$auth.logout("general").then(
+					() => {
+						this.$router.push({ name: "index" });
+					},
+					() => {}
+				);
+			},
+
+			// For Tracking Scroll
+			handle_scroll() {
+				this.scroll = window.scrollY;
+			},
+
+			// Scroll to top
+			scroll_top() {
+				window.scrollTo(0, 0);
+			},
+		},
+
+		// For Tracking Scroll
+		beforeMount() {
+			window.addEventListener("scroll", this.handle_scroll);
+		},
+		beforeDestroy() {
+			window.removeEventListener("scroll", this.handle_scroll);
 		},
 	};
 </script>

@@ -1,13 +1,13 @@
 <template>
 	<div id="app">
 		<div class="main-wrapper main-wrapper-1">
-			<DashboardHeader v-if="authCheck" />
-			<div class="main-content" :class="authCheck && sidebar ? 'active':''">
+			<DashboardHeader v-if="auth_check" />
+			<div class="main-content" :class="auth_check && sidebar ? 'active':''">
 				<section class="section">
 					<Nuxt />
 				</section>
 			</div>
-			<DashboardFooter v-if="authCheck" />
+			<DashboardFooter v-if="auth_check" />
 		</div>
 	</div>
 </template>

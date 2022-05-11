@@ -32,6 +32,7 @@
 									<label for="password" class="form-label">Password</label>
 									<input type="password" class="form-control bg-light border-light" id="password" placeholder="Enter Password" v-model="credential.password" required>
 								</div>
+								<p class="invalid-feedback" v-if="error">Email or password not matched</p>
 								<div class="row mt-4">
 									<div class="col">
 										<div class="form-check">
@@ -44,7 +45,10 @@
 									</div>
 								</div>
 								<div class="d-grid my-4">
-									<button class="btn btn-dark shadow-none" type="submit">Sign in</button>
+									<button class="btn btn-dark shadow-none" type="submit" :disabled="loading">
+										<span v-if="loading">Checking...</span>
+										<span v-else>Sign in</span>
+									</button>
 								</div>
 							</form>
 							<div class="d-flex align-items-center my-4">
@@ -54,7 +58,7 @@
 							</div>
 							<div class="row gx-3">
 								<div class="col-6 d-grid">
-									<button type="button" class="btn btn-light btn-sm shadow-none border">
+									<button type="button" class="btn btn-light btn-sm shadow-none border" @click="social_sign_in('google')">
 										<span class="me-2">
 											<i>
 												<icon :icon="['fab', 'google']"></icon>
@@ -63,7 +67,7 @@
 									</button>
 								</div>
 								<div class="col-6 d-grid">
-									<button type="button" class="btn btn-light btn-sm shadow-none border">
+									<button type="button" class="btn btn-light btn-sm shadow-none border" @click="social_sign_in('facebook')">
 										<span class="me-2">
 											<i>
 												<icon :icon="['fab', 'facebook-f']"></icon>
@@ -81,6 +85,8 @@
 </template>
 <script>
 	export default {
+		name: "sign-in",
+		auth: "guest",
 		head() {
 			return {
 				title: `Sign in - ${this.app_name}`,
@@ -95,23 +101,31 @@
 					email: "",
 					password: "",
 				},
-				errors: {},
+				error: false,
 			};
 		},
+
 		methods: {
 			sign_in() {
 				if (this.click) {
 					this.click = false;
-					this.$axios.post("").then(
-						(response) => {
-							this.click = true;
+					this.loading = true;
+					this.error = false;
+					this.$auth.loginWith("general", { data: this.credential }).then(
+						() => {
+							this.$router.push({ name: "index" });
 						},
-						(error) => {
-							$nuxt.$emit("error", error);
+						() => {
+							this.error = true;
 							this.click = true;
+							this.loading = false;
 						}
 					);
 				}
+			},
+
+			social_sign_in(social) {
+				window.location.href = `${this.url}api/sign-in/${social}`;
 			},
 		},
 	};

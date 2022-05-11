@@ -9,11 +9,10 @@ export const getters = {
 	url: (state) => state.url,
 	app_name: (state) => state.app_name,
 	google_analytics: (state) => state.google_analytics,
-	// authentication: (state) => state.auth.loggedIn,
-	// user: (state) => state.auth.user,
-	// isAdmin: (state) => state.auth.loggedIn ? state.auth.user.role_id === 1 ? true : false : false,
-	// isSeller: (state) => state.auth.loggedIn ? state.auth.user.role_id === 2 ? true : false : false,
-	// isCustomer: (state) => state.auth.loggedIn ? state.auth.user.role_id === 3 ? true : false : false,
+	authentication: (state) => state.auth.loggedIn,
+	user: (state) => state.auth.user,
+	is_admin: (state) => state.auth.loggedIn ? state.auth.user.role_id === 1 ? true : false : false,
+	is_customer: (state) => state.auth.loggedIn ? state.auth.user.role_id === 2 ? true : false : false,
 }
 
 export const mutations = {

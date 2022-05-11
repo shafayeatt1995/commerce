@@ -33,13 +33,13 @@ export default {
 
   components: true,
 
-  buildModules: [
-  ],
+  buildModules: [],
 
   modules: [
-    '@nuxtjs/axios',
-    '@nuxtjs/dotenv',
-    'nuxt-client-init-module',
+	'@nuxtjs/axios',
+	'@nuxtjs/dotenv',
+	'@nuxtjs/auth-next',
+	'nuxt-client-init-module',
 		[
 			'nuxt-fontawesome',
 			{
@@ -66,12 +66,94 @@ export default {
 			loadingClass: 'isLoading',
 			loadedClass: 'isLoaded',
 		}]
-  ],
+	],
 
-  axios: {
-    baseURL: '/',
-  },
+	axios: {
+		baseURL: `${process.env.URL}api/`,
+		proxy: true,
+	},
 
-  build: {
-  }
+	publicRuntimeConfig: {
+		axios: {
+			browserBaseURL: `${process.env.URL}api/`,
+		},
+	},
+
+	privateRuntimeConfig: {
+		axios: {
+			baseURL: `${process.env.URL}api/`,
+		},
+	},
+
+	proxy: {
+		'/laravel': {
+			target: '/',
+			pathRewrite: { '^/laravel': '/' },
+		},
+	},
+
+	auth: {
+		strategies: {
+			general: {
+				provider: 'laravel/jwt',
+				url: '/',
+				endpoints: {
+					login: { url: 'login', method: 'post' },
+					logout: { url: 'logout', method: 'post' },
+					refresh: { url: 'refresh', method: 'post' },
+					user: { url: 'user', method: 'post' },
+				},
+				token: {
+					property: 'access_token',
+					maxAge: 60 * 60 * 24,
+				},
+				refreshToken: {
+					maxAge: 20160 * 60,
+				},
+			},
+			dashboard: {
+				provider: 'laravel/jwt',
+				url: '/',
+				endpoints: {
+					login: { url: 'dashboard-login', method: 'post' },
+					logout: { url: 'logout', method: 'post' },
+					refresh: { url: 'refresh', method: 'post' },
+					user: { url: 'user', method: 'post' },
+				},
+				token: {
+					property: 'access_token',
+					maxAge: 60 * 60 * 24,
+				},
+				refreshToken: {
+					maxAge: 20160 * 60,
+				},
+			},
+			social: {
+				provider: 'laravel/jwt',
+				url: '/',
+				endpoints: {
+					login: { url: 'sign-in-social', method: 'post' },
+					logout: { url: 'logout', method: 'post' },
+					refresh: { url: 'refresh', method: 'post' },
+					user: { url: 'user', method: 'post' },
+				},
+				token: {
+					property: 'access_token',
+					maxAge: 60 * 60 * 24,
+				},
+				refreshToken: {
+					maxAge: 20160 * 60,
+				},
+			},
+		},
+		redirect: {
+			login: '/sign-in',
+		}
+	},
+
+	router: {
+		middleware: ['auth']
+	},
+
+	build: {}
 }

@@ -5,6 +5,8 @@
 </template>
 <script>
 	export default {
+		name: "forgot-password",
+		auth: "guest",
 		head() {
 			return {
 				title: `Forgot Password - ${this.app_name}`,

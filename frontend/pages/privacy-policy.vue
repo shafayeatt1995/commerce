@@ -1,15 +1,15 @@
 <template>
 	<div>
-		<h1>Anik</h1>
+		<h1>privacy policy</h1>
 	</div>
 </template>
 <script>
 	export default {
-		name: "index",
+		name: "privacy-policy",
 		auth: false,
 		head() {
 			return {
-				title: "Home - " + this.app_name,
+				title: "Privacy Policy - " + this.app_name,
 			};
 		},
 	};

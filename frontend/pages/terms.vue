@@ -1,15 +1,15 @@
 <template>
 	<div>
-		<h1>Anik</h1>
+		<h1>Terms</h1>
 	</div>
 </template>
 <script>
 	export default {
-		name: "index",
+		name: "terms",
 		auth: false,
 		head() {
 			return {
-				title: "Home - " + this.app_name,
+				title: "Terms - " + this.app_name,
 			};
 		},
 	};

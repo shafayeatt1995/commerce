@@ -23,10 +23,6 @@
 	--ripple-ani-duration: 5s
 }
 
-html, body {
-	scroll-behavior: auto !important
-}
-
 body {
 	font-family: var(--body-font);
 	font-size: 16px;
@@ -2103,7 +2099,7 @@ textarea.is-invalid {
 	background-color: var(--theme-color);
 	color: var(--white-color);
 	text-align: center;
-	font-size: 16px;
+	font-size: 20px;
 	width: var(--btn-size, 50px);
 	height: var(--btn-size, 50px);
 	line-height: var(--btn-size, 50px);
@@ -12525,7 +12521,59 @@ span.select2-selection.select2-selection--single:focus {
 	}
 }
 
+.account-dropdown {
+	min-width: 200px;
+	position: absolute;
+	background: #fff;
+	padding: 10px;
+	z-index: 99;
+	right: -10px;
+	top: 100px;
+	transform: scale(0);
+	transition: .3s;
+	box-shadow: 0 2px 28px 0 rgb(0 0 0 / 10%);
+}
 
+.account-dropdown.activeCard {
+	transform: scale(1);
+}
+
+.account-dropdown ul {
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+	padding: 0;
+}
+
+.account-el {
+	display: flex;
+	align-items: center;
+	border-bottom: 1px solid #ddd;
+}
+
+.account-el:last-child {
+	border-bottom: none;
+}
+
+.account-el a, .account-el button {
+	color: var(--title-color);
+	font-weight: bold;
+	padding: 10px;
+	width: 100%;
+	text-align: left;
+	outline: none;
+	border: none;
+	background: transparent;
+	transition: .3s;
+}
+
+.account-el a:hover, .account-el button:hover {
+	color: var(--theme-color);
+	font-weight: bold;
+	padding: 10px;
+	width: 100%;
+}
 
 .fade-enter,
 .fade-leave-to {
