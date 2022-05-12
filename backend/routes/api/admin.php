@@ -14,6 +14,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['middleware' => 'api', 'namespace' => 'App\Http\Controllers\Api\Admin'], function () {
+
+    //Brand Controller
+    Route::post('brand', 'BrandController@index');
+    Route::get('brand-list', 'BrandController@brandList');
+    Route::post('create-brand', 'BrandController@createBrand');
+    Route::post('update-brand/{brand}', 'BrandController@updateBrand');
+    Route::post('delete-brand/{brand}', 'BrandController@deleteBrand');
 });

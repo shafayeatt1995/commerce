@@ -7,7 +7,7 @@ const options = {
 	transition: "Vue-Toastification__bounce",
 	maxToasts: 10,
 	newestOnTop: true,
-	position: "bottom-right",
+	position: "bottom-center",
 	timeout: 3000,
 	closeOnClick: true,
 	pauseOnFocusLoss: true,

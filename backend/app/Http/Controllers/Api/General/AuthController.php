@@ -17,7 +17,7 @@ class AuthController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'socialSignIn', 'socialSignInCallback', 'signInSocial']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'socialSignIn', 'socialSignInCallback', 'signInSocial', 'dashboardLogin']]);
     }
 
     public function login(Request $request)
@@ -26,6 +26,21 @@ class AuthController extends Controller
 
         if ($token = $this->guard()->attempt($credentials)) {
             if (!$this->guard()->user()->social && $this->guard()->user()->platform === null) {
+                return $this->respondWithToken($token);
+            } else {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+        } else {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+    }
+
+    public function dashboardLogin(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
+
+        if ($token = $this->guard()->attempt($credentials)) {
+            if ($this->guard()->user()->role_id === 1) {
                 return $this->respondWithToken($token);
             } else {
                 return response()->json(['error' => 'Unauthorized'], 401);

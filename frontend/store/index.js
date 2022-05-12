@@ -2,12 +2,14 @@ import axios from 'axios';
 export const state = () => ({
 	url: process.env.URL,
 	app_name: '',
+	sidebar: true,
 	google_analytics: '',
 })
 
 export const getters = {
 	url: (state) => state.url,
 	app_name: (state) => state.app_name,
+	sidebar: (state) => state.sidebar,
 	google_analytics: (state) => state.google_analytics,
 	authentication: (state) => state.auth.loggedIn,
 	user: (state) => state.auth.user,
@@ -21,6 +23,10 @@ export const mutations = {
 		state.app_name = response.data.app_name;
 		state.google_analytics = response.data.google_analytics;
 	},
+
+	sidebar(state) {
+		state.sidebar = !state.sidebar;
+	}
 }
 
 export const actions = {
@@ -35,5 +41,9 @@ export const actions = {
 				context.commit('setup', response);
 			}
 		)
+	},
+
+	sidebar(context) {
+		context.commit('sidebar');
 	},
 }

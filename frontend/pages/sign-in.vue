@@ -14,7 +14,7 @@
 				<div class="container pt-5">
 					<div class="row gx-0">
 						<div class="col-11 col-md-10 mx-auto">
-							<p class="text-end">Not a member? <router-link :to="{name: 'sign-up'}">Sign up now</router-link>
+							<p class="text-end">Not a member? <nuxt-link :to="{name: 'sign-up'}">Sign up now</nuxt-link>
 							</p>
 						</div>
 					</div>
@@ -41,7 +41,7 @@
 										</div>
 									</div>
 									<div class="col text-end">
-										<router-link :to="{name: 'forgot-password'}">Forgot Password ?</router-link>
+										<nuxt-link :to="{name: 'forgot-password'}">Forgot Password ?</nuxt-link>
 									</div>
 								</div>
 								<div class="d-grid my-4">

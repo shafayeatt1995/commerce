@@ -9,6 +9,7 @@ const GlobalData = {
 				...mapGetters({
 					url: 'url',
 					app_name: 'app_name',
+					sidebar: 'sidebar',
 					google_analytics: 'google_analytics',
 					auth_check: 'authentication',
 					user: 'user',

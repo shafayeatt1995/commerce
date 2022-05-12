@@ -14,10 +14,10 @@
 						<div class="header-links">
 							<ul>
 								<li v-if="!auth_check">
-									<router-link :to="{name: 'sign-in'}">Sign in</router-link>
+									<nuxt-link :to="{name: 'sign-in'}">Sign in</nuxt-link>
 								</li>
 								<li v-if="!auth_check">
-									<router-link :to="{name: 'sign-up'}">Sign up</router-link>
+									<nuxt-link :to="{name: 'sign-up'}">Sign up</nuxt-link>
 								</li>
 								<li v-if="auth_check"><a href="#">Track Your Order</a></li>
 								<li>
@@ -84,9 +84,9 @@
 						<div class="row gx-20 align-items-center justify-content-between">
 							<div class="col-auto">
 								<div class="header-logo py-3 py-lg-0">
-									<router-link :to="{name: 'index'}">
+									<nuxt-link :to="{name: 'index'}">
 										<img :src="`${url}images/logo.svg`" alt="logo">
-									</router-link>
+									</nuxt-link>
 								</div>
 							</div>
 							<div class="col-auto">
@@ -225,6 +225,13 @@
 													<i>
 														<icon :icon="['far', 'circle-user']"></icon>
 													</i> Sign up
+												</nuxt-link>
+											</li>
+											<li class="account-el" v-if="auth_check && admin">
+												<nuxt-link :to="{name: 'dashboard'}" target="_blank">
+													<i>
+														<icon :icon="['fas', 'gauge-high']"></icon>
+													</i> Dashboard
 												</nuxt-link>
 											</li>
 											<li class="account-el" v-if="auth_check">

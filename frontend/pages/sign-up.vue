@@ -14,7 +14,7 @@
 				<div class="container pt-5">
 					<div class="row gx-0">
 						<div class="col-11 col-md-10 mx-auto">
-							<p class="text-end">Already a member? <router-link :to="{name: 'sign-in'}">Sign in now</router-link>
+							<p class="text-end">Already a member? <nuxt-link :to="{name: 'sign-in'}">Sign in now</nuxt-link>
 							</p>
 						</div>
 					</div>
@@ -61,7 +61,7 @@
 									<div class="col">
 										<div class="form-check">
 											<input id="agree" name="agree" class="form-check-input" type="checkbox" v-model="agree" required>
-											<label class="form-check-label" for="agree">I agree to the <router-link :to="{name: 'terms'}">Terms</router-link> and <router-link :to="{name: 'privacy-policy'}">Privacy Policy</router-link>.</label>
+											<label class="form-check-label" for="agree">I agree to the <nuxt-link :to="{name: 'terms'}">Terms</nuxt-link> and <nuxt-link :to="{name: 'privacy-policy'}">Privacy Policy</nuxt-link>.</label>
 										</div>
 									</div>
 								</div>

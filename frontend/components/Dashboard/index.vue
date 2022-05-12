@@ -2,12 +2,14 @@
 	<div id="app">
 		<div class="main-wrapper main-wrapper-1">
 			<DashboardHeader v-if="auth_check" />
-			<div class="main-content" :class="auth_check && sidebar ? 'active':''">
+			<div class="main-content" :class="!sidebar ? 'full':''">
 				<section class="section">
 					<Nuxt />
 				</section>
 			</div>
-			<DashboardFooter v-if="auth_check" />
+			<transition name="fade">
+				<div class="sidebar-overlay" v-if="!sidebar && auth_check" @click="toggle_sidebar"></div>
+			</transition>
 		</div>
 	</div>
 </template>
@@ -18,30 +20,23 @@
 				link: [
 					{
 						rel: "stylesheet",
-						href: `${process.env.URL}dashboard/css/bootstrap.min.css`,
+						href: `${process.env.URL}dashboard/bootstrap.min.css`,
 					},
 					{
 						rel: "stylesheet",
-						href: `${process.env.URL}dashboard/css/components.css`,
+						href: `${process.env.URL}dashboard/components.css`,
 					},
 					{
 						rel: "stylesheet",
-						href: `${process.env.URL}dashboard/css/style.css`,
+						href: `${process.env.URL}dashboard/style.css`,
 					},
 				],
 			};
 		},
-
-		data() {
-			return {
-				sidebar: true,
-			};
-		},
-
-		created() {
-			this.$nuxt.$on("toggleSidebar", (data) => {
-				this.sidebar = data;
-			});
+		methods: {
+			toggle_sidebar() {
+				this.$store.dispatch("sidebar");
+			},
 		},
 	};
 </script>
