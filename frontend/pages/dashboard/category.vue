@@ -25,7 +25,7 @@
 							</form>
 						</div>
 						<div class="card-body">
-							<table class="table table-hover">
+							<table class="table table-hover table-responsive">
 								<thead>
 									<tr class="text-center">
 										<th scope="col">#</th>
@@ -51,7 +51,8 @@
 										<td class="text-center">
 											<img :src="url + category.image" :alt="category.name" class="img-fluid py-2 max-h100px">
 										</td>
-										<td class="text-center">
+										<td class="py-3">
+											<span class="badge badge-light m-1" v-for="sub in category.sub_categories" :key="`sub-${sub.id}`">{{sub.name}}</span>
 										</td>
 										<td class="text-center">
 											<div class="d-flex justify-content-center">
@@ -231,7 +232,7 @@
 						(response) => {
 							$nuxt.$emit("trigger_category");
 							$nuxt.$emit("trigger_reset");
-							$nuxt.$emit("success", response.data);
+							$nuxt.$emit("success", response.data.message);
 							this.waiting = false;
 							this.click = true;
 						},

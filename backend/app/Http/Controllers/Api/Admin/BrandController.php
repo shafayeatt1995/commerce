@@ -52,7 +52,7 @@ class BrandController extends Controller
             $brand->save();
         };
 
-        return response()->json('Brand successfully created');
+        return response()->json(["message" => "Brand successfully created"], 200);
     }
 
     public function updateBrand(Request $request, Brand $brand)

@@ -17,7 +17,7 @@ class CategoryController extends Controller
         $request->validate([
             'colum' => 'required'
         ]);
-        $categories = Category::where($request->colum, 'LIKE', '%' . $request->keyword . '%')->latest()->paginate(20);
+        $categories = Category::where($request->colum, 'LIKE', '%' . $request->keyword . '%')->with('sub_categories')->latest()->paginate(20);
         return response()->json(compact('categories'));
     }
 
@@ -52,7 +52,7 @@ class CategoryController extends Controller
             $category->save();
         };
 
-        return response()->json('Category successfully created');
+        return response()->json(["message" => "Category successfully created"], 200);
     }
 
     public function updateCategory(Request $request, Category $category)

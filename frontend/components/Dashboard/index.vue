@@ -2,7 +2,7 @@
 	<div id="app">
 		<div class="main-wrapper main-wrapper-1">
 			<DashboardHeader v-if="auth_check" />
-			<div class="main-content" :class="!sidebar ? 'full':''">
+			<div class="main-content" :class="auth_check ? !sidebar ? 'full':'' : 'full'">
 				<section class="section">
 					<Nuxt />
 				</section>

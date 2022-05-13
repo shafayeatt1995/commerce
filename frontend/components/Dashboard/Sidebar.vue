@@ -37,7 +37,7 @@
 									<nuxt-link :to="{name: 'dashboard-category'}">Category</nuxt-link>
 								</li>
 								<li>
-									<nuxt-link :to="{name: 'dashboard-sub-category'}">Sub Category</nuxt-link>
+									<nuxt-link :to="{name: 'dashboard-category-sub'}">Sub Category</nuxt-link>
 								</li>
 							</ul>
 						</transition>

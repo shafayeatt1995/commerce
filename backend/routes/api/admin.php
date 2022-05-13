@@ -29,4 +29,11 @@ Route::group(['middleware' => 'api', 'namespace' => 'App\Http\Controllers\Api\Ad
     Route::post('create-category', 'CategoryController@createCategory');
     Route::post('update-category/{category}', 'CategoryController@updateCategory');
     Route::post('delete-category/{category}', 'CategoryController@deleteCategory');
+
+    //Sub Category Controller
+    Route::post('sub-category', 'SubCategoryController@index');
+    Route::get('sub-category-list', 'SubCategoryController@categoryList');
+    Route::post('create-sub-category', 'SubCategoryController@createCategory');
+    Route::post('update-sub-category/{sub_category}', 'SubCategoryController@updateCategory');
+    Route::post('delete-sub-category/{sub_category}', 'SubCategoryController@deleteCategory');
 });
