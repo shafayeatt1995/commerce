@@ -37,10 +37,17 @@ Route::group(['middleware' => 'api', 'namespace' => 'App\Http\Controllers\Api\Ad
     Route::post('update-sub-category/{sub_category}', 'SubCategoryController@updateCategory');
     Route::post('delete-sub-category/{sub_category}', 'SubCategoryController@deleteCategory');
 
-    //Sub Category Controller
+    //Size Controller
     Route::post('size', 'SizeController@index');
     Route::get('size-list', 'SizeController@sizeList');
     Route::post('create-size', 'SizeController@createSize');
     Route::post('update-size/{size}', 'SizeController@updateSize');
     Route::post('delete-size/{size}', 'SizeController@deleteSize');
+
+    //Material Controller
+    Route::post('material', 'MaterialController@index');
+    Route::get('material-list', 'MaterialController@materialList');
+    Route::post('create-material', 'MaterialController@createMaterial');
+    Route::post('update-material/{material}', 'MaterialController@updateMaterial');
+    Route::post('delete-material/{material}', 'MaterialController@deleteMaterial');
 });
