@@ -11,21 +11,20 @@ use Intervention\Image\Facades\Image;
 
 class BrandController extends Controller
 {
-
     public function index(Request $request)
     {
         $this->authorize('admin');
         $request->validate([
             'colum' => 'required'
         ]);
-        $brands = Brand::where($request->colum, 'LIKE', '%' . $request->keyword . '%')->paginate(20);
+        $brands = Brand::where($request->colum, 'LIKE', '%' . $request->keyword . '%')->latest()->paginate(20);
         return response()->json(compact('brands'));
     }
 
     public function brandList()
     {
-        $this->authorize('adminOrSeller');
-        $brands = Brand::orderBy('name')->select('id', 'name')->get();
+        $this->authorize('admin');
+        $brands = Brand::orderBy('name')->get();
         return response()->json(compact('brands'));
     }
 

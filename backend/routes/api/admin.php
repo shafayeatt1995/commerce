@@ -22,4 +22,11 @@ Route::group(['middleware' => 'api', 'namespace' => 'App\Http\Controllers\Api\Ad
     Route::post('create-brand', 'BrandController@createBrand');
     Route::post('update-brand/{brand}', 'BrandController@updateBrand');
     Route::post('delete-brand/{brand}', 'BrandController@deleteBrand');
+
+    //Category Controller
+    Route::post('category', 'CategoryController@index');
+    Route::get('category-list', 'CategoryController@categoryList');
+    Route::post('create-category', 'CategoryController@createCategory');
+    Route::post('update-category/{category}', 'CategoryController@updateCategory');
+    Route::post('delete-category/{category}', 'CategoryController@deleteCategory');
 });

@@ -314,6 +314,7 @@ select.form-control:not([size]):not([multiple]) {
   font-weight: bold;
   font-size: 20px;
   padding: 20px;
+  text-align: center;
 }
 
 .image-frame label {
@@ -2292,7 +2293,6 @@ h6 .badge {
   left: 34px;
   content: '\f0d8';
   font-weight: 600;
-  font-family: 'Font Awesome 5 Free';
   color: #fff;
   font-size: 30px;
 }
@@ -3438,7 +3438,6 @@ body.sidebar-mini .main-sidebar .sidebar-menu>li ul.dropdown-menu li a {
 
 body.sidebar-mini .main-sidebar .sidebar-menu>li ul.dropdown-menu li a.has-dropdown:after {
   content: "";
-  font-family: 'Font Awesome 5 Free';
   font-weight: 900;
   position: absolute;
   top: 50%;
@@ -3588,7 +3587,6 @@ body.layout-3 .navbar.navbar-secondary .navbar-nav>.nav-item>.nav-link.has-dropd
 
 body.layout-3 .navbar.navbar-secondary .navbar-nav>.nav-item>.nav-link.has-dropdown:after {
   content: "";
-  font-family: 'Font Awesome 5 Free';
   font-weight: 900;
   position: absolute;
   top: 50%;
@@ -3638,7 +3636,6 @@ body.layout-3 .navbar.navbar-secondary .navbar-nav>.nav-item .dropdown-menu .nav
 
 body.layout-3 .navbar.navbar-secondary .navbar-nav>.nav-item .dropdown-menu .nav-item .nav-link.has-dropdown:after {
   content: "";
-  font-family: 'Font Awesome 5 Free';
   font-weight: 900;
   position: absolute;
   top: 50%;
@@ -3767,13 +3764,24 @@ body.layout-3 .main-footer {
 }
 
 .main-sidebar .sidebar-menu li a:hover {
-  background-color: #fcfcfd;
+  background-color: #f9f9f9;
 }
 
 .main-sidebar .sidebar-menu li a.nuxt-link-exact-active {
   color: #6777ef;
   font-weight: 600;
-  background-color: #fcfcfd;
+  background-color: #f9f9f9;
+}
+
+li.sidebar-dropdown.dropdown-active ul li a.nuxt-link-exact-active {
+  background: transparent !important;
+}
+
+.main-sidebar .sidebar-menu li a.nuxt-link-exact-active,
+li.dropdown-active a.has-dropdown {
+  color: #6777ef;
+  font-weight: 600;
+  background-color: #f9f9f9;
 }
 
 .main-sidebar .sidebar-menu li.active ul.dropdown-menu {
@@ -3782,14 +3790,18 @@ body.layout-3 .main-footer {
 
 .main-sidebar .sidebar-menu li a.has-dropdown:after {
   content: "▼";
-  font-family: 'Font Awesome 5 Free';
   font-weight: 900;
   position: absolute;
   top: 50%;
   right: 20px;
   -webkit-transform: translate(0, -50%);
-  transform: translate(0, -50%);
+  transform: translate(0, -50%) rotate(0deg);
   font-size: 12px;
+  transition: .3s;
+}
+
+.main-sidebar .sidebar-menu li.dropdown-active a:after {
+  transform: translate(0, -50%) rotate(-90deg);
 }
 
 .main-sidebar .sidebar-menu li.active>ul.dropdown-menu {
@@ -3894,7 +3906,8 @@ body:not(.sidebar-mini) .sidebar-style-1 .sidebar-menu li.active ul.dropdown-men
   color: #fff;
 }
 
-body:not(.sidebar-mini) .sidebar-style-2 .sidebar-menu>li>a.nuxt-link-exact-active:before {
+body:not(.sidebar-mini) .sidebar-style-2 .sidebar-menu>li>a.nuxt-link-exact-active:before,
+li.dropdown-active a.has-dropdown:before {
   content: '';
   position: absolute;
   left: 0;
