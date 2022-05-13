@@ -25,7 +25,7 @@
 							</form>
 						</div>
 						<div class="card-body">
-							<table class="table table-hover table-responsive">
+							<table class="table table-hover table-responsive-lg">
 								<thead>
 									<tr class="text-center">
 										<th scope="col">#</th>
@@ -42,7 +42,7 @@
 									</td>
 								</tbody>
 								<tbody v-else-if="categories.data && categories.data.length >= 1">
-									<tr v-for="(category, key) in categories.data" :key="category.data">
+									<tr v-for="(category, key) in categories.data" :key="category.id">
 										<th class="text-center">
 											<Key :data="categories" :index="key" />
 										</th>

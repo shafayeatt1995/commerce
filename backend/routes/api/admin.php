@@ -36,4 +36,11 @@ Route::group(['middleware' => 'api', 'namespace' => 'App\Http\Controllers\Api\Ad
     Route::post('create-sub-category', 'SubCategoryController@createCategory');
     Route::post('update-sub-category/{sub_category}', 'SubCategoryController@updateCategory');
     Route::post('delete-sub-category/{sub_category}', 'SubCategoryController@deleteCategory');
+
+    //Sub Category Controller
+    Route::post('size', 'SizeController@index');
+    Route::get('size-list', 'SizeController@sizeList');
+    Route::post('create-size', 'SizeController@createSize');
+    Route::post('update-size/{size}', 'SizeController@updateSize');
+    Route::post('delete-size/{size}', 'SizeController@deleteSize');
 });

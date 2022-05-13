@@ -42,6 +42,14 @@
 							</ul>
 						</transition>
 					</li>
+					<li>
+						<nuxt-link :to="{name: 'dashboard-size'}" class="nav-link">
+							<i>
+								<icon :icon="['fas', 'tags']"></icon>
+							</i>
+							<span>Size</span>
+						</nuxt-link>
+					</li>
 				</ul>
 			</aside>
 		</div>
