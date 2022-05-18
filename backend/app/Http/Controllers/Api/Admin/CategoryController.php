@@ -17,7 +17,7 @@ class CategoryController extends Controller
         $request->validate([
             'colum' => 'required'
         ]);
-        $categories = Category::where($request->colum, 'LIKE', '%' . $request->keyword . '%')->with('sub_categories')->latest()->paginate(20);
+        $categories = Category::where($request->colum, 'LIKE', '%' . $request->keyword . '%')->with('sub_categories', 'image')->latest()->paginate(20);
         return response()->json(compact('categories'));
     }
 
@@ -33,24 +33,14 @@ class CategoryController extends Controller
         $this->authorize('admin');
         $request->validate([
             'name' => 'required|unique:categories',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp',
+            'image' => 'required|numeric',
         ]);
 
-        $slug = Str::slug($request->name);
-        $path = 'images/categories/';
-        $imageName = $path . $slug . time() . '.webp';
-
-        if (!File::exists($path)) {
-            File::makeDirectory($path, $mode = 0777, true, true);
-        }
-
-        if (Image::make($request->image)->encode('webp', 80)->save($imageName)) {
-            $category = new Category();
-            $category->name = $request->name;
-            $category->slug = $slug;
-            $category->image = $imageName;
-            $category->save();
-        };
+        $category = new Category();
+        $category->name = $request->name;
+        $category->slug = Str::slug($request->name);
+        $category->image = $request->image;
+        $category->save();
 
         return response()->json(["message" => "Category successfully created"], 200);
     }
@@ -60,25 +50,12 @@ class CategoryController extends Controller
         $this->authorize('admin');
         $request->validate([
             'name' => 'required',
+            'image' => 'required|numeric',
         ]);
 
-        $slug = Str::slug($request->name);
-        $path = 'images/categories/';
-
-        $image = $request->hasFile('image');
-        if ($image) {
-            if (File::exists($category->image)) {
-                unlink($category->image);
-            }
-            $imageName = $path . $slug . time() . '.webp';
-            Image::make($request->image)->encode('webp', 80)->save($imageName);
-        } else {
-            $imageName = $category->image;
-        }
-
         $category->name = $request->name;
-        $category->slug = $slug;
-        $category->image = $imageName;
+        $category->slug = Str::slug($request->name);
+        $category->image = $request->image;
         $category->save();
         return response()->json(["message" => "Category successfully updated"], 200);
     }
@@ -86,9 +63,6 @@ class CategoryController extends Controller
     public function deleteCategory(Category $category)
     {
         $this->authorize('admin');
-        if (File::exists($category->image)) {
-            unlink($category->image);
-        }
         $category->delete();
         return response()->json(["message" => "Category successfully deleted"], 200);
     }

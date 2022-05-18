@@ -11,6 +11,11 @@ class Category extends Model
 
     protected $fillable = ['name', 'image'];
 
+    public function image()
+    {
+        return $this->belongsTo(Photo::class, 'image');
+    }
+
     public function sub_categories()
     {
         return $this->hasMany(SubCategory::class);

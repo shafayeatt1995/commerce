@@ -17,7 +17,7 @@ class BrandController extends Controller
         $request->validate([
             'colum' => 'required'
         ]);
-        $brands = Brand::where($request->colum, 'LIKE', '%' . $request->keyword . '%')->latest()->paginate(20);
+        $brands = Brand::where($request->colum, 'LIKE', '%' . $request->keyword . '%')->with('logo')->latest()->paginate(20);
         return response()->json(compact('brands'));
     }
 
@@ -33,25 +33,14 @@ class BrandController extends Controller
         $this->authorize('admin');
         $request->validate([
             'name' => 'required|unique:brands',
-            'logo' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp',
+            'logo' => 'required|numeric',
         ]);
 
-        $slug = Str::slug($request->name);
-        $path = 'images/brands/';
-        $imageName = $path . $slug . time() . '.webp';
-
-        if (!File::exists($path)) {
-            File::makeDirectory($path, $mode = 0777, true, true);
-        }
-
-        if (Image::make($request->logo)->encode('webp', 80)->save($imageName)) {
-            $brand = new Brand();
-            $brand->name = $request->name;
-            $brand->slug = $slug;
-            $brand->logo = $imageName;
-            $brand->save();
-        };
-
+        $brand = new Brand();
+        $brand->name = $request->name;
+        $brand->slug = Str::slug($request->name);
+        $brand->logo = $request->logo;
+        $brand->save();
         return response()->json(["message" => "Brand successfully created"], 200);
     }
 
@@ -60,25 +49,12 @@ class BrandController extends Controller
         $this->authorize('admin');
         $request->validate([
             'name' => 'required',
+            'logo' => 'required|numeric',
         ]);
 
-        $slug = Str::slug($request->name);
-        $path = 'images/brands/';
-
-        $image = $request->hasFile('logo');
-        if ($image) {
-            if (File::exists($brand->logo)) {
-                unlink($brand->logo);
-            }
-            $imageName = $path . $slug . time() . '.webp';
-            Image::make($request->logo)->encode('webp', 80)->save($imageName);
-        } else {
-            $imageName = $brand->logo;
-        }
-
         $brand->name = $request->name;
-        $brand->slug = $slug;
-        $brand->logo = $imageName;
+        $brand->slug = Str::slug($request->name);
+        $brand->logo = $request->logo;
         $brand->save();
         return response()->json(["message" => "Brand successfully updated"], 200);
     }
@@ -86,9 +62,6 @@ class BrandController extends Controller
     public function deleteBrand(Brand $brand)
     {
         $this->authorize('admin');
-        if (File::exists($brand->logo)) {
-            unlink($brand->logo);
-        }
         $brand->delete();
         return response()->json(["message" => "Brand successfully deleted"], 200);
     }

@@ -16,6 +16,24 @@
 							<span>Dashboard</span>
 						</nuxt-link>
 					</li>
+					<li class="sidebar-dropdown" :class="active === 'product' || route.substring(11, 18) === 'product' ? 'dropdown-active' : ''">
+						<a href="#" class="nav-link has-dropdown" @click.prevent="active = active !== 'product' ? 'product' : ''">
+							<i>
+								<icon :icon="['far', 'rectangle-list']"></icon>
+							</i>
+							<span>Product</span>
+						</a>
+						<transition name="slide" mode="out-in">
+							<ul class="sidebar-dropdown-menu" v-if="active === 'product' || route.substring(11, 18) === 'product'">
+								<li>
+									<nuxt-link :to="{name: 'dashboard-product'}">All Product</nuxt-link>
+								</li>
+								<li>
+									<nuxt-link :to="{name: 'dashboard-product-create'}">Create Product</nuxt-link>
+								</li>
+							</ul>
+						</transition>
+					</li>
 					<li>
 						<nuxt-link :to="{name: 'dashboard-brand'}" class="nav-link">
 							<i>

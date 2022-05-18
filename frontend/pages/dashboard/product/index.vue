@@ -48,7 +48,7 @@
 										</th>
 										<td class="text-center">{{brand.name}}</td>
 										<td class="text-center">
-											<img :data-src="url + brand.logo.photo" :alt="brand.name" class="img-fluid py-2 max-h100px" v-lazy-load>
+											<img :src="url + brand.logo" :alt="brand.name" class="img-fluid py-2 max-h100px">
 										</td>
 										<td class="text-center">
 											<div class="d-flex justify-content-center">
@@ -68,7 +68,7 @@
 								</tbody>
 								<tbody v-else>
 									<td colspan="4" class="pt-3">
-										<DashboardEmpty message="No brand found" />
+										<h2 class="text-center">No brand found</h2>
 									</td>
 								</tbody>
 							</table>
@@ -89,16 +89,25 @@
 									<input type="text" class="form-control" id="name" v-model="form.name" required>
 									<p class="invalid-feedback" v-if="errors.name">{{errors.name[0]}}</p>
 								</div>
-								<div class="custom-file pointer">
-									<span class="custom-file-label" @click="toggle_photo_modal">Select Brand Logo</span>
-									<p class="invalid-feedback mt-5" v-if="errors.logo">{{errors.logo[0]}}</p>
-								</div>
-								<div class="gallery gallery-md mt-2" v-if="select">
-									<div class="gallery-item" :style="`background-image: url(${url + preview.photo});`" v-for="preview in select" :key="preview.id">
-										<i @click="remove_image">
-											<icon :icon="['fas', 'xmark']"></icon>
-										</i>
+								<div class="image-form">
+									<div class="image-frame" v-if="edit_mode">
+										<img :src="preview" class="img-fluid max-h250" alt="logo" v-if="form.logo">
+										<img :src="url + old_logo" class="img-fluid max-h250" alt="logo" v-else>
 									</div>
+									<div class="image-frame" v-else>
+										<img :src="preview" class="img-fluid max-h250" alt="logo" v-if="form.logo">
+										<label for="logo" class="image-frame-content" v-else>
+											<i>
+												<icon :icon="['fas', 'cloud-arrow-up']"></icon>
+											</i>
+											<span>Select and upload your logo</span>
+										</label>
+									</div>
+									<label for="logo" class="image-select">
+										Chose Logo
+									</label>
+									<input type="file" class="form-control" id="logo" accept="image/*" @change="image($event)">
+									<p class="invalid-feedback" v-if="errors.logo">{{errors.logo[0]}}</p>
 								</div>
 								<div class="text-right mt-4">
 									<button class="btn btn-warning ml-2" type="reset" @click="reset">Reset</button>
@@ -146,33 +155,59 @@
 				},
 				edit_mode: false,
 				errors: {},
+				preview: "",
 				edit_id: "",
+				old_logo: "",
 				form: {
 					name: "",
 					logo: "",
 				},
-				select: [],
 			};
 		},
 
 		methods: {
 			// Get Brand
+			get_brands() {
+				this.loading = true;
+				this.$axios.post("brand", this.search_option).then(
+					(response) => {
+						this.brands = response.data.brands;
+						this.loading = false;
+					},
+					(error) => {
+						$nuxt.$emit("error", error);
+						this.loading = false;
+					}
+				);
+			},
 			get_results(page = 1) {
-				if (this.click) {
-					this.click = false;
-					this.loading = true;
-					this.$axios.post(`brand?page=${page}`, this.search_option).then(
-						(response) => {
-							this.click = true;
-							this.brands = response.data.brands;
-							this.loading = false;
-						},
-						(error) => {
-							this.click = true;
-							$nuxt.$emit("error", error);
-							this.loading = false;
-						}
-					);
+				this.$axios
+					.post(`brand?page=${page}`, this.search_option)
+					.then((response) => {
+						this.brands = response.data.brands;
+					});
+			},
+
+			// Reset Brand form
+			reset() {
+				this.form.name = "";
+				this.form.logo = "";
+				this.preview = "";
+				this.edit_id = "";
+				this.errors = {};
+				this.edit_mode = false;
+			},
+
+			// show Selected image
+			image(event) {
+				if (event.target.files.length > 0) {
+					let file = event.target.files[0];
+					let reader = new FileReader();
+					reader.onloadend = () => {
+						this.preview = reader.result;
+					};
+					reader.readAsDataURL(file);
+					this.form.logo = file;
 				}
 			},
 
@@ -182,18 +217,25 @@
 					this.click = false;
 					this.waiting = true;
 					this.error = {};
-					this.$axios.post("create-brand", this.form).then(
+					const config = {
+						headers: { "content-type": "multipart/form-data" },
+					};
+
+					let formData = new FormData();
+					formData.append("name", this.form.name);
+					formData.append("logo", this.form.logo);
+					this.$axios.post("create-brand", formData, config).then(
 						(response) => {
-							this.click = true;
 							$nuxt.$emit("trigger_brand");
 							$nuxt.$emit("trigger_reset");
 							$nuxt.$emit("success", response.data.message);
 							this.waiting = false;
+							this.click = true;
 						},
 						(error) => {
-							this.click = true;
 							this.errors = error.response.data.errors;
 							this.waiting = false;
+							this.click = true;
 						}
 					);
 				}
@@ -204,9 +246,8 @@
 				$nuxt.$emit("trigger_reset");
 				this.edit_mode = true;
 				this.form.name = brand.name;
-				this.form.logo = brand.logo.id;
+				this.old_logo = brand.logo;
 				this.edit_id = brand.id;
-				this.select = [brand.logo];
 			},
 
 			//Update new Brand
@@ -215,20 +256,27 @@
 					this.click = false;
 					this.waiting = true;
 					this.error = {};
+					const config = {
+						headers: { "content-type": "multipart/form-data" },
+					};
+
+					let formData = new FormData();
+					formData.append("name", this.form.name);
+					formData.append("logo", this.form.logo);
 					this.$axios
-						.post(`update-brand/${this.edit_id}`, this.form)
+						.post(`update-brand/${this.edit_id}`, formData, config)
 						.then(
 							(response) => {
-								this.click = true;
 								$nuxt.$emit("trigger_brand");
 								$nuxt.$emit("trigger_reset");
 								$nuxt.$emit("success", response.data.message);
 								this.waiting = false;
+								this.click = true;
 							},
 							(error) => {
-								this.click = true;
 								this.errors = error.response.data.errors;
 								this.waiting = false;
+								this.click = true;
 							}
 						);
 				}
@@ -250,18 +298,19 @@
 						})
 						.then((result) => {
 							if (result.isConfirmed) {
+								let list = id ? [id] : this.select;
 								this.$axios.post(`delete-brand/${id}`).then(
 									(response) => {
-										this.click = true;
+										$nuxt.$emit("trigger_brand");
 										$nuxt.$emit(
 											"success",
 											response.data.message
 										);
-										$nuxt.$emit("trigger_brand");
+										this.click = true;
 									},
 									(error) => {
-										this.click = true;
 										$nuxt.$emit("error", error);
+										this.click = true;
 									}
 								);
 							} else {
@@ -271,68 +320,60 @@
 				}
 			},
 
-			// Reset Brand form
-			reset() {
-				this.form.name = "";
-				this.form.logo = "";
-				this.select = [];
-				this.edit_id = "";
-				this.errors = {};
-				this.edit_mode = false;
-			},
-
 			// Search brand
 			search() {
-				$nuxt.$emit("trigger_brand");
-			},
-			instantSearch() {
-				setTimeout(() => {
-					$nuxt.$emit("trigger_brand");
-				}, 500);
-			},
-
-			// Toggle photo modal
-			toggle_photo_modal() {
-				this.$store.dispatch("toggle_photo_modal", {
-					name: "brand",
-					modal: true,
-					multiple: false,
-					photo: this.select,
-				});
-			},
-
-			//Set Select Image
-			set_image(data) {
-				if (data.name === "brand") {
-					this.select = data.photo;
-					this.form.logo = data.photo.length > 0 ? data.photo[0].id : "";
+				if (this.click) {
+					this.click = false;
+					this.loading = true;
+					this.$axios.post("brand", this.search_option).then(
+						(response) => {
+							this.brands = response.data.brands;
+							this.loading = false;
+							this.click = true;
+						},
+						(error) => {
+							$nuxt.$emit("error", error);
+							this.loading = false;
+							this.click = true;
+						}
+					);
 				}
 			},
-
-			//Remove Select Image
-			remove_image() {
-				this.select = [];
-				this.form.logo = "";
+			instantSearch() {
+				if (this.click) {
+					this.click = false;
+					this.loading = true;
+					setTimeout(() => {
+						this.$axios.post("brand", this.search_option).then(
+							(response) => {
+								this.brands = response.data.brands;
+								this.loading = false;
+								this.click = true;
+							},
+							(error) => {
+								$nuxt.$emit("error", error);
+								this.loading = false;
+								this.click = true;
+							}
+						);
+					}, 500);
+				}
 			},
 		},
 
 		created() {
-			this.get_results();
+			this.get_brands();
 			this.$nuxt.$on("trigger_brand", () => {
-				this.get_results();
+				this.get_brands();
 			});
 			this.$nuxt.$on("trigger_reset", () => {
 				this.reset();
-			});
-			this.$nuxt.$on("trigger_select_image", (data) => {
-				this.set_image(data);
 			});
 		},
 
 		beforeDestroy() {
 			this.$nuxt.$off("trigger_brand");
 			this.$nuxt.$off("trigger_reset");
-			this.$nuxt.$off("trigger_select_image");
 		},
 	};
 </script>

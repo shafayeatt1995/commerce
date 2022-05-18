@@ -18,10 +18,21 @@ Vue.filter("year", (value) => {
 	return moment(value).format("YYYY");
 });
 
-
 // Currency Format
 Vue.filter("currency", (value) => {
 	return isNaN(value) ? value : parseFloat(value).toFixed(2).replace(/\.00$/, "");
+});
+
+// Kilo Byte Format
+Vue.filter("size", (value) => {
+	const kb = 1024;
+	if (value > ((kb ** 3) - 1) && !isNaN(value)) {
+		return (parseFloat(value) / (kb ** 3)).toFixed(2).replace(/\.00$/, "") + "GB";
+	} else if (value > ((kb ** 2) - 1) && !isNaN(value)) {
+		return (parseFloat(value) / (kb ** 2)).toFixed(2).replace(/\.00$/, "") + "MB";
+	} else if (!isNaN(value)) {
+		return (parseFloat(value) / kb).toFixed(2).replace(/\.00$/, "") + "KB";
+	}
 });
 
 

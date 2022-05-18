@@ -63,8 +63,8 @@ export default {
 		['nuxt-lazy-load', {
 			directiveOnly: true,
 			defaultImage: `${process.env.URL}images/preloader.svg`,
-			loadingClass: 'isLoading',
-			loadedClass: 'isLoaded',
+			loadingClass: 'loading',
+			loadedClass: 'loaded',
 		}]
 	],
 

@@ -60,7 +60,7 @@
 								<div class="row mt-4">
 									<div class="col">
 										<div class="form-check">
-											<input id="agree" name="agree" class="form-check-input" type="checkbox" v-model="agree" required>
+											<input id="agree" class="form-check-input" type="checkbox" v-model="agree" required>
 											<label class="form-check-label" for="agree">I agree to the <nuxt-link :to="{name: 'terms'}">Terms</nuxt-link> and <nuxt-link :to="{name: 'privacy-policy'}">Privacy Policy</nuxt-link>.</label>
 										</div>
 									</div>

@@ -49,7 +49,7 @@
 										</th>
 										<td class="text-center">{{category.name}}</td>
 										<td class="text-center">
-											<img :src="url + category.image" :alt="category.name" class="img-fluid py-2 max-h100px">
+											<img :src="url + category.image.photo" :alt="category.name" class="img-fluid py-2 max-h100px">
 										</td>
 										<td class="py-3">
 											<span class="badge badge-light m-1" v-for="sub in category.sub_categories" :key="`sub-${sub.id}`">{{sub.name}}</span>
@@ -76,7 +76,7 @@
 									</td>
 								</tbody>
 							</table>
-							<pagination :data="categories" @pagination-change-page="get_results" class="justify-content-center mt-3 paginate"></pagination>
+							<pagination :data="categories" @pagination-change-page="get_categories" class="justify-content-center mt-3 paginate"></pagination>
 						</div>
 					</div>
 				</div>
@@ -93,25 +93,16 @@
 									<input type="text" class="form-control" id="name" v-model="form.name" required>
 									<p class="invalid-feedback" v-if="errors.name">{{errors.name[0]}}</p>
 								</div>
-								<div class="image-form">
-									<div class="image-frame" v-if="edit_mode">
-										<img :src="preview" class="img-fluid max-h250" alt="image" v-if="form.image">
-										<img :src="url + old_image" class="img-fluid max-h250" alt="image" v-else>
+								<div class="custom-file pointer">
+									<span class="custom-file-label" @click="toggle_photo_modal">Select Category Image</span>
+									<p class="invalid-feedback mt-5" v-if="errors.image">{{errors.image[0]}}</p>
+								</div>
+								<div class="gallery gallery-md mt-2" v-if="select">
+									<div class="gallery-item" :style="`background-image: url(${url + preview.photo});`" v-for="preview in select" :key="preview.id">
+										<i @click="remove_image">
+											<icon :icon="['fas', 'xmark']"></icon>
+										</i>
 									</div>
-									<div class="image-frame" v-else>
-										<img :src="preview" class="img-fluid max-h250" alt="image" v-if="form.image">
-										<label for="image" class="image-frame-content" v-else>
-											<i>
-												<icon :icon="['fas', 'cloud-arrow-up']"></icon>
-											</i>
-											<span>Select and upload your category image</span>
-										</label>
-									</div>
-									<label for="image" class="image-select">
-										Chose Image
-									</label>
-									<input type="file" class="form-control" id="image" accept="image/*" @change="image($event)">
-									<p class="invalid-feedback" v-if="errors.image">{{errors.image[0]}}</p>
 								</div>
 								<div class="text-right mt-4">
 									<button class="btn btn-warning ml-2" type="reset" @click="reset">Reset</button>
@@ -159,60 +150,46 @@
 				},
 				edit_mode: false,
 				errors: {},
-				preview: "",
 				edit_id: "",
-				old_image: "",
 				form: {
 					name: "",
 					image: "",
 				},
+				select: [],
 			};
 		},
 
 		methods: {
 			// Get category
-			get_categories() {
-				this.loading = true;
-				this.$axios.post("category", this.search_option).then(
-					(response) => {
-						this.categories = response.data.categories;
-						this.loading = false;
-					},
-					(error) => {
-						$nuxt.$emit("error", error);
-						this.loading = false;
-					}
-				);
-			},
-			get_results(page = 1) {
-				this.$axios
-					.post(`category?page=${page}`, this.search_option)
-					.then((response) => {
-						this.categories = response.data.categories;
-					});
+			get_categories(page = 1) {
+				if (this.click) {
+					this.click = false;
+					this.loading = true;
+					this.$axios
+						.post(`category?page=${page}`, this.search_option)
+						.then(
+							(response) => {
+								this.click = true;
+								this.categories = response.data.categories;
+								this.loading = false;
+							},
+							(error) => {
+								this.click = true;
+								$nuxt.$emit("error", error);
+								this.loading = false;
+							}
+						);
+				}
 			},
 
 			// Reset category form
 			reset() {
 				this.form.name = "";
 				this.form.image = "";
-				this.preview = "";
+				this.select = [];
 				this.edit_id = "";
 				this.errors = {};
 				this.edit_mode = false;
-			},
-
-			// show Selected image
-			image(event) {
-				if (event.target.files.length > 0) {
-					let file = event.target.files[0];
-					let reader = new FileReader();
-					reader.onloadend = () => {
-						this.preview = reader.result;
-					};
-					reader.readAsDataURL(file);
-					this.form.image = file;
-				}
 			},
 
 			//Create new category
@@ -221,25 +198,18 @@
 					this.click = false;
 					this.waiting = true;
 					this.error = {};
-					const config = {
-						headers: { "content-type": "multipart/form-data" },
-					};
-
-					let formData = new FormData();
-					formData.append("name", this.form.name);
-					formData.append("image", this.form.image);
-					this.$axios.post("create-category", formData, config).then(
+					this.$axios.post("create-category", this.form).then(
 						(response) => {
+							this.click = true;
 							$nuxt.$emit("trigger_category");
 							$nuxt.$emit("trigger_reset");
 							$nuxt.$emit("success", response.data.message);
 							this.waiting = false;
-							this.click = true;
 						},
 						(error) => {
+							this.click = true;
 							this.errors = error.response.data.errors;
 							this.waiting = false;
-							this.click = true;
 						}
 					);
 				}
@@ -250,8 +220,9 @@
 				$nuxt.$emit("trigger_reset");
 				this.edit_mode = true;
 				this.form.name = category.name;
-				this.old_image = category.image;
+				this.form.image = category.image.id;
 				this.edit_id = category.id;
+				this.select = [category.image];
 			},
 
 			//Update new category
@@ -260,27 +231,20 @@
 					this.click = false;
 					this.waiting = true;
 					this.error = {};
-					const config = {
-						headers: { "content-type": "multipart/form-data" },
-					};
-
-					let formData = new FormData();
-					formData.append("name", this.form.name);
-					formData.append("image", this.form.image);
 					this.$axios
-						.post(`update-category/${this.edit_id}`, formData, config)
+						.post(`update-category/${this.edit_id}`, this.form)
 						.then(
 							(response) => {
+								this.click = true;
 								$nuxt.$emit("trigger_category");
 								$nuxt.$emit("trigger_reset");
 								$nuxt.$emit("success", response.data.message);
 								this.waiting = false;
-								this.click = true;
 							},
 							(error) => {
+								this.click = true;
 								this.errors = error.response.data.errors;
 								this.waiting = false;
-								this.click = true;
 							}
 						);
 				}
@@ -305,16 +269,16 @@
 								let list = id ? [id] : this.select;
 								this.$axios.post(`delete-category/${id}`).then(
 									(response) => {
+										this.click = true;
 										$nuxt.$emit("trigger_category");
 										$nuxt.$emit(
 											"success",
 											response.data.message
 										);
-										this.click = true;
 									},
 									(error) => {
-										$nuxt.$emit("error", error);
 										this.click = true;
+										$nuxt.$emit("error", error);
 									}
 								);
 							} else {
@@ -326,42 +290,36 @@
 
 			// Search category
 			search() {
-				if (this.click) {
-					this.click = false;
-					this.loading = true;
-					this.$axios.post("category", this.search_option).then(
-						(response) => {
-							this.categories = response.data.categories;
-							this.loading = false;
-							this.click = true;
-						},
-						(error) => {
-							$nuxt.$emit("error", error);
-							this.loading = false;
-							this.click = true;
-						}
-					);
-				}
+				$nuxt.$emit("trigger_category");
 			},
 			instantSearch() {
-				if (this.click) {
-					this.click = false;
-					this.loading = true;
-					setTimeout(() => {
-						this.$axios.post("category", this.search_option).then(
-							(response) => {
-								this.categories = response.data.categories;
-								this.loading = false;
-								this.click = true;
-							},
-							(error) => {
-								$nuxt.$emit("error", error);
-								this.loading = false;
-								this.click = true;
-							}
-						);
-					}, 500);
+				setTimeout(() => {
+					$nuxt.$emit("trigger_category");
+				}, 500);
+			},
+
+			// Toggle photo modal
+			toggle_photo_modal() {
+				this.$store.dispatch("toggle_photo_modal", {
+					name: "category",
+					modal: true,
+					multiple: false,
+					photo: this.select,
+				});
+			},
+
+			//Set Select Image
+			set_image(data) {
+				if (data.name === "category") {
+					this.select = data.photo;
+					this.form.image = data.photo.length > 0 ? data.photo[0].id : "";
 				}
+			},
+
+			//Remove Select Image
+			remove_image() {
+				this.select = [];
+				this.form.image = "";
 			},
 		},
 
@@ -373,11 +331,15 @@
 			this.$nuxt.$on("trigger_reset", () => {
 				this.reset();
 			});
+			this.$nuxt.$on("trigger_select_image", (data) => {
+				this.set_image(data);
+			});
 		},
 
 		beforeDestroy() {
 			this.$nuxt.$off("trigger_category");
 			this.$nuxt.$off("trigger_reset");
+			this.$nuxt.$off("trigger_select_image");
 		},
 	};
 </script>

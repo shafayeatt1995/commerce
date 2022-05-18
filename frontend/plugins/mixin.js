@@ -10,6 +10,8 @@ const GlobalData = {
 					url: 'url',
 					app_name: 'app_name',
 					sidebar: 'sidebar',
+					photo_modal: 'photo_modal',
+					photo_modal_data: 'photo_modal_data',
 					google_analytics: 'google_analytics',
 					auth_check: 'authentication',
 					user: 'user',

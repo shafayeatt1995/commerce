@@ -83,7 +83,6 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        return redirect('google.com');
         $request->validate([
             'name' => 'required|max:30',
             'email' => 'required|email|unique:users,email',

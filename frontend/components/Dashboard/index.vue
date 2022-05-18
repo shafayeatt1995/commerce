@@ -10,6 +10,7 @@
 			<transition name="fade">
 				<div class="sidebar-overlay" v-if="!sidebar && auth_check" @click="toggle_sidebar"></div>
 			</transition>
+			<DashboardPhoto v-if="photo_modal" />
 		</div>
 	</div>
 </template>

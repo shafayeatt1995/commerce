@@ -50,4 +50,9 @@ Route::group(['middleware' => 'api', 'namespace' => 'App\Http\Controllers\Api\Ad
     Route::post('create-material', 'MaterialController@createMaterial');
     Route::post('update-material/{material}', 'MaterialController@updateMaterial');
     Route::post('delete-material/{material}', 'MaterialController@deleteMaterial');
+
+    //Photo Controller
+    Route::post('photo', 'PhotoController@index');
+    Route::post('upload-photo', 'PhotoController@uploadPhoto');
+    Route::post('delete-photo/{photo}', 'PhotoController@deletePhoto');
 });

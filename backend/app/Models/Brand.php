@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Brand extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['name', 'logo'];
+
+    public function logo()
+    {
+        return $this->belongsTo(Photo::class, 'logo');
+    }
 }

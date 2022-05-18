@@ -941,13 +941,14 @@ textarea {
 }
 
 input[type="checkbox"] {
-	visibility: hidden;
 	opacity: 0;
 	display: inline-block;
 	vertical-align: middle;
 	width: 0;
 	height: 0;
-	display: none
+	position: absolute;
+	margin-left: 10px !important;
+	margin-top: 20px;
 }
 
 input[type="checkbox"]:checked~label:before {
